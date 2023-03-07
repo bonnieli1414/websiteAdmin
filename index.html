@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理系統</title>
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+    <!-- 引入google icon -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="initFn()">
+    <!-- 註冊/登入頁面 -->
+    <div id="loginPage" class="text-center mx-auto pt-3" style="max-width: 330px;">
+        <h1 class="py-3">後台管理系統</h1>
+        <!-- 首頁tab分頁按鈕 -->
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-login-tab" data-bs-toggle="tab" data-bs-target="#nav-login"
+                    type="button" role="tab" aria-controls="nav-login" aria-selected="true">登入</button>
+                <button class="nav-link" id="nav-register-tab" data-bs-toggle="tab" data-bs-target="#nav-register"
+                    type="button" role="tab" aria-controls="nav-register" aria-selected="false">註冊</button>
+            </div>
+        </nav>
+        <!-- 分頁內容：登入/註冊 -->
+        <div class="tab-content py-2" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-login" role="tabpanel" aria-labelledby="nav-login-tab">
+                <form method="post">
+                    <div class="form-floating py-2">
+                        <input type="email" class="form-control" id="adminLoginEmail" placeholder="name@example.com">
+                        <label for="adminLoginEmail">電子信箱</label>
+                    </div>
+                    <div class="form-floating py-2">
+                        <input type="password" class="form-control" id="adminLoginPassword" placeholder="Password">
+                        <label for="adminLoginPassword">密碼</label>
+                    </div>
+                    <button id="adminLoginBtn" class="w-50 btn btn-lg btn-primary my-4" type="submit">登入</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-register" role="tabpanel" aria-labelledby="nav-register-tab">
+                <form method="post">
+                    <div class="form-floating py-2">
+                        <input type="email" class="form-control" id="adminSignupEmail" placeholder="name@example.com">
+                        <label for="adminSignupEmail">電子信箱</label>
+                    </div>
+                    <div class="form-floating py-2">
+                        <input type="text" class="form-control" id="adminSignupUser" placeholder="Username">
+                        <label for="adminSignupUser">使用者名稱</label>
+                    </div>
+                    <div class="form-floating py-2">
+                        <input type="password" class="form-control" id="adminSignupPassword" placeholder="Password">
+                        <label for="adminSignupPassword">密碼</label>
+                    </div>
+                    <div class="form-floating py-2">
+                        <input type="password" class="form-control" id="adminSignupPassword_db" placeholder="Password">
+                        <label for="adminSignupPassword_db">確認密碼</label>
+                    </div>
+                    <button id="adminSignupBtn" class="w-50 btn btn-lg btn-primary my-4" type="submit">註冊</button>
+                </form>
+            </div>
+            <p class="text-muted">&copy; 2022-2023</p>
+        </div>
+    </div>
+    <!-- loading效果 -->
+    <div id="loadingPage"></div>
+    <div id="adminPage" class="d-none">
+        <!-- 登入後的側邊欄 -->
+        <aside class="vh-100 bg-light border-end d-flex flex-column align-items-center">
+            <!-- 側邊欄首頁連結 -->
+            <h4 class="nav text-center">
+                <a href="#" data-title="adminIndex" id="indexBtn" class="nav-link p-3">後台管理系統</a>
+            </h4>
+            <hr>
+            <!-- 側邊欄選單 -->
+            <ul class="d-flex flex-column align-items-center" style="overflow-y: auto;">
+                <!-- 訂單管理 -->
+                <li class="nav-item">
+                    <a href="#" data-title="adminOrder" id="orderBtn" class="material-symbols-outlined nav-link">
+                        production_quantity_limits訂單管理&emsp;
+                    </a>
+                </li>
+                <!-- 商品管理：商品和物料 -->
+                <li class="nav-item">
+                    <a data-title="adminProduct" id="productAllBtn" data-bs-toggle="collapse" href="#collapseProduct"
+                        class="material-symbols-outlined nav-link" role="button" aria-current="page"
+                        aria-expanded="false" aria-controls="collapseProduct">
+                        phone_iphone商品管理arrow_drop_down
+                    </a>
+                    <div class="collapse" id="collapseProduct">
+                        <div class="card card-body">
+                            <a class="text-center nav-link py-2" href="#" data-title="adminProduct"
+                                id="productBtn">商品列表</a>
+                            <a class="text-center nav-link py-2" href="#" data-title="adminBOM" id="BOMBtn">物料列表</a>
+                        </div>
+                    </div>
+                </li>
+                <!-- 庫存管理 -->
+                <li class="nav-item">
+                    <a href="#" data-title="adminInventory" id="inventoryBtn"
+                        class="material-symbols-outlined nav-link">
+                        inventory庫存管理&emsp;
+                    </a>
+                </li>
+                <!-- 進貨管理：進貨和供應商 -->
+                <li class="nav-item">
+                    <a data-title="adminPurchase" id="purchaseAllBtn" data-bs-toggle="collapse" href="#collapsePurchase"
+                        class="material-symbols-outlined nav-link" role="button" aria-current="page"
+                        aria-expanded="false" aria-controls="collapsePurchase">
+                        local_shipping進貨管理arrow_drop_down
+                    </a>
+                    <div class="collapse" id="collapsePurchase">
+                        <div class="card card-body">
+                            <a data-title="adminPurchase" id="purchaseBtn" class="text-center nav-link py-2"
+                                href="#">進貨列表</a>
+                            <a data-title="adminSupplier" id="supplierBtn" class="text-center nav-link py-2"
+                                href="#">供應商列表</a>
+                        </div>
+                    </div>
+                </li>
+                <!-- 資料修改 -->
+                <!-- <li class="nav-item">
+                    <a href="#" data-title="adminProfile" id="profileBtn" class="material-symbols-outlined nav-link">
+                        group個人資料修改&emsp;
+                    </a>
+                </li> -->
+            </ul>
+        </aside>
+        <!-- 主視窗 -->
+        <main class="pb-3">
+            <!-- 主視窗上方登入欄 -->
+            <div class="w-100 bg-white border-bottom d-flex align-items-center sticky-top">
+                <a href="#" id="toggleMenuBtn">
+                    <span class="material-symbols-outlined" style="width: 48px; height: 48px;">
+                        open_in_full
+                    </span>
+                </a>
+                <div
+                    class="w-100 d-flex flex-nowrap justify-content-between align-content-center ps-2 pe-4 border-start">
+                    <div id="loginTime" class="nav-link py-2 my-1"></div>
+                    <a id="signoutBtn" class="signoutBtn-pic nav-link rounded-pill p-2 my-1 text-end" href="#">
+                        &emsp;登出
+                    </a>
+                </div>
+            </div>
+            <!-- 後台首頁 -->
+            <div id="adminIndex" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">~ 歡迎來到後台管理系統 ~</strong>
+                </div>
+            </div>
+            <!-- 訂單列表 -->
+            <div id="adminOrder" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">訂單列表</strong>
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">訂單編號</th>
+                                        <th scope="col">聯絡人</th>
+                                        <th scope="col">聯絡地址</th>
+                                        <th scope="col">電子信箱</th>
+                                        <th scope="col">訂單品項</th>
+                                        <th scope="col">預訂日期</th>
+                                        <th scope="col">付款方式</th>
+                                        <th scope="col">訂單狀態</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 商品列表 -->
+            <div id="adminProduct" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong class="fs-5 m-2" style="color:blue">商品列表</strong>
+                    <input id="addProductBtn" class="btn btn-secondary btn-sm m-2" type="button" value="新增商品資料"
+                        data-nextpage="adminProduct_add">
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">產品編號</th>
+                                        <th scope="col">商品名稱</th>
+                                        <th scope="col">商品描述</th>
+                                        <th scope="col">是否上架</th>
+                                        <th scope="col">原價</th>
+                                        <th scope="col">優惠價</th>
+                                        <th scope="col">庫存量</th>
+                                        <th scope="col">編輯</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增商品 -->
+            <div id="adminProduct_add" data-child="add" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong class="fs-5 m-2" style="color:blue">商品資料</strong>
+                    <input id="backProductBtn" class="btn btn-secondary btn-sm m-2" type="button" value="返回商品列表"
+                        data-prepage="adminProduct">
+                </div>
+                <div class="container py-2">
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">產品分類</div>
+                        <div class="col-9 col-md-2 my-1 text-start">成品</div>
+                        <div class="col-3 col-md-2 my-1 text-end">商品類別</div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select class="form-select shadow-sm" aria-label="Default select">
+                                <option selected>選擇</option>
+                                <option value="手機類">手機類</option>
+                                <option value="配件類">配件類</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addProductName">商品名稱</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addProductName" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="floatingTextarea">商品描述</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <textarea class="form-control shadow-none" id="floatingTextarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="card-groups d-flex flex-wrap justify-content-center form-text"></div>
+
+                    <div id="pictureDemo" style="text-align: center;"><img style="height: 190px;"
+                            src="https://motorolatw.vtexassets.com/arquivos/ids/155679/Motorola-edge-30-pdp-render-Silence-12-bcxm87y2.png?v=637879325266470000"></img>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="productPicDemo">&emsp;商品圖</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start d-flex">
+                            <input type="text" id="productPicDemo" class="form-control shadow-none mx-1"
+                                placeholder="https://motorolatw.vtexassets.com/arquivos/ids/155679/Motorola-edge-30-pdp-render-Silence-12-bcxm87y2.png?v=637879325266470000">
+                            <div>
+                                <input id="productPicDemo_add" type="button" class="btn btn-primary" value="+">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">是否上架
+                        </div>
+                        <div class="col-3 col-md-3 my-1">
+                            <div class="switch_sale">
+                                <input type="checkbox" class="switch_sale-checkbox" id="switch_sale" checked>
+                                <label class="switch_sale-label" for="switch_sale">
+                                    <span class="switch_sale-inner"></span>
+                                    <span class="switch_sale-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addProductPrice">&emsp;&emsp;原價</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addProductPrice" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addProductSale">&emsp;&emsp;特價</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addProductSale" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addProductInventory">&emsp;庫存量</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addProductInventory" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addProductSupplier">&emsp;供應商</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select id="addProductSupplier" class="form-select shadow-sm" aria-label="Default select">
+                                <option selected>選擇</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row align-items-center justify-content-end justify-content-md-start">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="">物料清單</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select id="adminProduct_addBOMListName" class="form-select shadow-sm"
+                                aria-label="Default select">
+                                <option selected>選擇</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 my-1 text-start">
+                            <input type="number" id="adminProduct_addBOMListNum" class="form-control shadow-none">
+                        </div>
+                        <div class="col-3 col-md-2 my-1 text-start">
+                            <input id="adminProduct_addBOMBtn" type="button" class="btn btn-primary" value="+"
+                                style="width:38px; height:38px;">
+                        </div>
+                    </div>
+                    <div id="adminProduct_addBOMListText" class="form-text" style="padding-bottom: 6rem;"></div>
+                    
+                    <div class="row align-items-center justify-content-end px-4">
+                        <div class="col my-1 text-end">
+                            <input id="adminProductClear" type="button" class="btn btn-outline-secondary" value="重置"
+                                data-reset="adminProduct_add">
+                            <input id="adminProductSend" type="button" class="btn btn-outline-primary" value="送出"
+                                data-send="adminProduct_add">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 編輯商品 -->
+            <div id="adminProduct_edit"></div>
+            <!-- 物料列表 -->
+            <div id="adminBOM" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong class="fs-5 m-2" style="color:blue">物料列表</strong>
+                    <input id="addBOMBtn" class="btn btn-secondary btn-sm m-2" type="button" value="新增物料資料"
+                        data-nextpage="adminBOM_add">
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">物料編號</th>
+                                        <th scope="col">物料名稱</th>
+                                        <th scope="col">單位</th>
+                                        <th scope="col">價格</th>
+                                        <th scope="col">庫存量</th>
+                                        <th scope="col">供應商</th>
+                                        <th scope="col">編輯</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增物件 -->
+            <div id="adminBOM_add" data-child="add" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong class="fs-5 m-2" style="color:blue">物料資料</strong>
+                    <input id="backBOMBtn" class="btn btn-secondary btn-sm m-2" type="button" value="返回物料列表"
+                        data-prepage="adminBOM">
+                </div>
+                <div class="container py-2">
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">產品分類</div>
+                        <div class="col-9 col-md-2 my-1 text-start">物料</div>
+                        <div class="col-3 col-md-2 my-1 text-end">物料類別</div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select class="form-select shadow-sm" aria-label="Default select">
+                                <option selected>選擇</option>
+                                <option value="面料類">面料類</option>
+                                <option value="TPU類">TPU類</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addBOMName">物料名稱</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addBOMName" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addBOMUnit">&emsp;&emsp;單位</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addBOMUnit" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addBOMPrice">&emsp;&emsp;價格</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addBOMPrice" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addBOMInventory">&emsp;庫存量</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addBOMInventory" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addBOMSupplier">&emsp;供應商</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select id="addBOMSupplier" class="form-select shadow-sm" aria-label="Default select">
+                                <option selected>選擇</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br><br><br>
+                    <div class="row align-items-center justify-content-end px-4">
+                        <div class="col my-1 text-end">
+                            <input id="adminBOMClear" type="button" class="btn btn-outline-secondary" value="重置"
+                                data-reset="adminBOM_add">
+                            <input id="adminBOMSend" type="button" class="btn btn-outline-primary" value="送出"
+                                data-send="adminBOM_add">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 庫存列表 -->
+            <div id="adminInventory" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">庫存列表</strong>
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">編號</th>
+                                        <th scope="col">名稱</th>
+                                        <th scope="col">類別</th>
+                                        <th scope="col">庫存量</th>
+                                        <th scope="col">物料組成清單</th>
+                                        <th scope="col">預計來貨</th>
+                                        <th scope="col">來貨數量</th>
+                                        <th scope="col">更新時間</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 進貨列表 -->
+            <div id="adminPurchase" data-child="add" class="d-none">
+                <div id="" class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">進貨列表</strong>
+                    <input class="btn btn-secondary btn-sm m-2" type="button" value="新增進貨資料"
+                        data-nextpage="adminPurchase_add">
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">預定日期</th>
+                                        <th scope="col">進貨編號</th>
+                                        <th scope="col">產品/物料編號</th>
+                                        <th scope="col">產品/物料名稱</th>
+                                        <th scope="col">預訂數量</th>
+                                        <th scope="col">預收日</th>
+                                        <th scope="col">進貨狀態</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增進貨 -->
+            <div id="adminPurchase_add" data-child="add" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong class="fs-5 m-2" style="color:blue">進貨資料</strong>
+                    <input id="backBOMBtn" class="btn btn-secondary btn-sm m-2" type="button" value="返回進貨列表"
+                        data-prepage="adminPurchase">
+                </div>
+                <div class="container py-2">
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addPurchaseProduct">&emsp;&emsp;產品</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <select id="addPurchaseProduct" class="form-select" aria-label="Default select">
+                                <option selected>選擇</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addPurchaseNum">&emsp;&emsp;數量</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addPurchaseNum" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addPurchaseDate">&emsp;預收日</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="date" id="addPurchaseDate" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br><br><br>
+                    <div class="row align-items-center justify-content-end px-4">
+                        <div class="col my-1 text-end">
+                            <input id="adminPurchaseClear" type="button" class="btn btn-outline-secondary" value="重置"
+                                data-reset="adminPurchase_add">
+                            <input id="adminPurchaseSend" type="button" class="btn btn-outline-primary" value="送出"
+                                data-send="adminPurchase_add">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 供應商列表 -->
+            <div id="adminSupplier" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">供應商列表</strong>
+                    <input id="addSupplierBtn" class="btn btn-secondary btn-sm m-2" type="button" value="新增供應商資料"
+                        data-nextpage="adminSupplier_add">
+                </div>
+                <div class="card shadow-sm mx-4">
+                    <div class="card-header bg-white">
+                        <div class="input-group">
+                            <input type="search" class="form-control shadow-none">
+                            <span class="material-symbols-outlined m-auto">
+                                search
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-success-subtle">
+                                    <tr class="align-middle">
+                                        <th scope="col"></th>
+                                        <th scope="col">供應商編號</th>
+                                        <th scope="col">供應商名稱</th>
+                                        <th scope="col">聯絡人</th>
+                                        <th scope="col">供應商電話</th>
+                                        <th scope="col">預計到貨日</th>
+                                        <th scope="col">編輯</th>
+                                        <th scope="col">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminSupplierListContent"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <p class="listTotal text-primary">總共 筆，每頁顯示 筆</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- 新增供應商 -->
+            <div id="adminSupplier_add" class="d-none">
+                <div class="px-4 d-flex justify-content-between align-items-center">
+                    <strong id="title1" class="fs-5 m-2" style="color:blue">供應商資料</strong>
+                    <input id="backSupplierBtn" class="btn btn-secondary btn-sm m-2" type="button" value="返回供應商列表"
+                        data-prepage="adminSupplier">
+                </div>
+                <div class="container py-2">
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addSupplierName">供應商名稱</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addSupplierName" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addSupplierTel">供應商電話</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addSupplierTel" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addSupplierContact">聯絡人</label>
+                        </div>
+                        <div class="col-9 col-md-9 my-1 text-start">
+                            <input type="text" id="addSupplierContact" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-3 col-md-2 my-1 text-end">
+                            <label for="addSupplierDueDate">&emsp;預交日</label>
+                        </div>
+                        <div class="col-9 col-md-4 my-1 text-start">
+                            <input type="number" id="addSupplierDueDate" class="form-control shadow-none">
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br><br><br>
+                    <div class="row align-items-center justify-content-end px-4">
+                        <div class="col my-1 text-end">
+                            <input id="adminSupplier_addSupplierClear" type="button" class="btn btn-outline-secondary"
+                                value="重置" data-reset="adminSupplier_add">
+                            <input id="adminSupplier_addSupplierListSend" type="button" class="btn btn-outline-primary"
+                                value="送出" data-send="adminSupplier_add">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/layout_login.js"></script>
+    <script type="module" src="./js/state.js"></script>
+    <script type="module" src="./js/layout_aside.js"></script>
+    <script type="module" src="./js/layout_main.js"></script>
+</body>
+
+</html>

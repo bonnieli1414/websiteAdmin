@@ -1,0 +1,111 @@
+/* 
+* 註冊/登入的等待loading效果
+*/
+#loadingPage {
+    position: absolute;
+    top: 42.5%;
+    left: 42.5%;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid gray;
+    border-bottom: 16px solid gray;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 
+* 商品新增的是否上架switch效果
+*/
+.switch_sale {
+    position: relative;
+    width: 100px;
+}
+
+.switch_sale-checkbox {
+    display: none;
+}
+
+.switch_sale-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #999;
+    border-radius: 20px;
+}
+
+.switch_sale-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.1s ease-in 0s;
+}
+
+.switch_sale-inner:before,
+.switch_sale-inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 30px;
+    padding: 0;
+    line-height: 30px;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.switch_sale-inner:before {
+    content: "關閉";
+    padding-right: 50px;
+    background-color: #eeeeee;
+    color: #999999;
+    text-align: right;
+}
+
+.switch_sale-inner:after {
+    content: "開啟";
+    padding-left: 50px;
+    background-color: var(--bs-primary);
+    color: #ffffff;
+}
+
+.switch_sale-switch {
+    display: block;
+    width: 18px;
+    margin: 6px;
+    background: #ffffff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 66px;
+    border: 2px solid #999999;
+    border-radius: 20px;
+    transition: all 0.1s ease-in 0s;
+}
+
+.switch_sale-checkbox:checked+.switch_sale-label .switch_sale-inner {
+    margin-left: 0;
+}
+
+.switch_sale-checkbox:checked+.switch_sale-label .switch_sale-switch {
+    right: 0px;
+}

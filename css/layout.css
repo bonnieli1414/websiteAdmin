@@ -1,0 +1,88 @@
+/* 行動版 優先*/
+
+/* 側邊欄初始設定在視窗外 */
+aside {
+    width: var(--aside-width);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 9999;
+    margin-left: calc(0px - var(--aside-width));
+    transition: margin-left .2s;
+}
+
+/* 主視窗初始設定 */
+main {
+    width: 100%;
+}
+
+/* toggle，側邊欄設置在視窗內 */
+.aside-toggled aside {
+    margin-left: 0px;
+}
+
+/* toggle，主視窗因應側邊欄自適應寬度 */
+.aside-toggled main {
+    width: calc(0px - var(--aside-width));
+    margin-left: var(--aside-width);
+}
+
+/* 設置寬度100%，讓hover的區塊有滿版效果 */
+aside ul {
+    width: 100%;
+}
+
+aside ul li.nav-item {
+    width: 100%;
+}
+
+aside .collapse .card {
+    padding: 0px;
+}
+
+aside .nav {
+    width: 100%;
+}
+
+aside .nav .nav-link {
+    width: 100%;
+}
+
+a.nav-link {
+    color: #000;
+}
+
+/* 側邊欄hover效果 */
+a.nav-link:hover {
+    color: var(--bs-white);
+    background-color: var(--bs-primary);
+}
+
+
+/* 桌面版 */
+@media (min-width: 768px) {
+
+    /* 側邊欄初始設定在視窗內 */
+    aside {
+        width: var(--aside-width);
+        margin-left: 0px;
+    }
+
+    /* 主視窗因應側邊欄自適應寬度 */
+    main {
+        width: calc(100vw - var(--aside-width));
+        margin-left: var(--aside-width);
+        transition: margin-left .2s;
+    }
+
+    /* toggle，側邊欄設置在視窗外 */
+    .aside-toggled aside {
+        margin-left: calc(0px - var(--aside-width));
+    }
+
+    /* toggle，主視窗因應側邊欄自適應寬度 */
+    .aside-toggled main {
+        width: 100%;
+        margin-left: 0px;
+    }
+}
